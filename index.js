@@ -1,86 +1,105 @@
+//ED6 MODULES
+
 import { config } from "./alt-text-generator.config.js";
 import "dotenv/config";
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
 import OpenAI from "openai";
 
-const openai = new OpenAI();
+//GLOBALS
+const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
+const INPUT_PATH = config.INPUT;
+const OUTPUT_PATH = config.OUTPUT;
+const PROMPT = `Analyze the provided image and generate a one-sentence description suitable as ALT text for an HTML element. Ensure the description is concise, describes the key content of the image, and avoids unnecessary details or subjective interpretations. Example: 'A red apple on a white table.'`;
 
-const API_KEY = process.env.API_KEY;
+//GET IMAGE FILES FUNC
+const getImageFiles = async (directory) => {
+  try {
+    const files = await fs.readdir(directory);
+    return files.filter((file) =>
+      [".jpg", ".jpeg", ".png"].includes(path.extname(file).toLowerCase())
+    );
+  } catch (error) {
+    console.error("Error reading directory:", error);
+    throw error;
+  }
+};
 
-const inputPath = config.INPUT;
-const outputPath = config.OUTPUT;
+//ENCODE IMAGES TO BASE64 READY TO SEND TO MODEL FUNC
+const encodeImageToBase64 = async (filePath) => {
+  try {
+    const data = await fs.readFile(filePath);
+    return data.toString("base64");
+  } catch (error) {
+    console.error(`Error reading file ${filePath}:`, error);
+    throw error;
+  }
+};
 
-const prompt = `Analyze the provided image and generate a one-sentence description suitable as ALT text for an HTML element. Ensure the description is concise, describes the key content of the image, and avoids unnecessary details or subjective interpretations. Example: 'A red apple on a white table.'`;
+//GET ALT TEXT FROM MODEL FUNC
+const generateAltText = async (base64Image) => {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: PROMPT,
+            },
+            {
+              type: "image_url",
+              image_url: { url: `data:image/jpeg;base64,${base64Image}` },
+            },
+          ],
+        },
+      ],
+    });
+    return response.choices[0].message.content.trim();
+  } catch (error) {
+    console.error("Error generating ALT text:", error);
+    throw error;
+  }
+};
 
-// Encode all images to base64
-const encodeImagesToBase64 = (inputPath) => {
-  fs.readdir(inputPath, (err, files) => {
-    if (err) {
-      console.error("Error reading directory:", err);
+//FORMAT RESPONSES INTO HTML TAG AND WRITE INTO FILE FUNC
+const writeHtmlFile = async (filePath, elements) => {
+  try {
+    const htmlContent = elements
+      .map(({ src, alt }) => `<img src="${src}" alt="${alt}">`)
+      .join("\n");
+    await fs.writeFile(filePath, htmlContent, { encoding: "utf8" });
+    console.log("HTML file written successfully.");
+  } catch (error) {
+    console.error("Error writing HTML file:", error);
+    throw error;
+  }
+};
+
+//MAIN FUNCION TO START PROCESS
+const processImages = async () => {
+  try {
+    const imageFiles = await getImageFiles(INPUT_PATH);
+    if (imageFiles.length === 0) {
+      console.log("No images found in the input directory.");
       return;
     }
 
-    const imageFiles = files.filter((file) =>
-      [".jpg", ".jpeg", ".png"].includes(path.extname(file).toLowerCase())
-    );
+    const elements = [];
+    for (const file of imageFiles) {
+      const filePath = path.join(INPUT_PATH, file);
+      const base64Image = await encodeImageToBase64(filePath);
+      const altText = await generateAltText(base64Image);
+      elements.push({ src: filePath, alt: altText });
+      console.log(`Processed: ${file} -> ALT text generated.`);
+    }
 
-    const encodedImages = [];
-
-    imageFiles.forEach((file) => {
-      const filePath = path.join(inputPath, file);
-
-      fs.readFile(filePath, (err, data) => {
-        if (err) {
-          console.error(`Error reading file ${file}:`, err);
-          return;
-        }
-
-        const base64Image = data.toString("base64");
-        encodedImages.push({
-          fileName: file,
-          base64: base64Image,
-          description: "",
-        });
-
-        if (encodedImages.length === imageFiles.length) {
-          encodedImages.forEach((encodedImage) => {
-            sendImagesToModel(encodedImage.base64, encodedImage.fileName);
-          });
-        }
-      });
-    });
-  });
+    await writeHtmlFile(OUTPUT_PATH, elements);
+  } catch (error) {
+    console.error("Error processing images:", error);
+  }
 };
 
-//SEND IMAGES TO VISION MODEL IN BASE64 FORMAT
-async function sendImagesToModel(base64Image, filePath) {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: prompt,
-          },
-          {
-            type: "image_url",
-            image_url: {
-              url: `data:image/jpeg;base64,${base64Image}`,
-            },
-          },
-        ],
-      },
-    ],
-  });
-  createHTMLElement(response.choices[0].message.content, filePath);
-  //SEND OUTPUT TO FUNCTION WHICH CREATES HTML ELEMENTS
-}
-
-const createHTMLElement = (description, filePath) => {
-  console.log(`<img src='${inputPath}/${filePath}' alt='${description}'>`);
-};
-
-encodeImagesToBase64(inputPath);
+processImages();
