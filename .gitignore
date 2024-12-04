@@ -1,5 +1,5 @@
 .env
 
-./test_input_output
+/test_input_output/
 
-./tempCodeRunner.js
+/tempCodeRunner.js
