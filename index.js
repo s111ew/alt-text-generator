@@ -22,9 +22,7 @@ const encodeImagesToBase64 = (inputPath) => {
     }
 
     const imageFiles = files.filter((file) =>
-      [".jpg", ".jpeg", ".png", ".gif", ".bmp"].includes(
-        path.extname(file).toLowerCase()
-      )
+      [".jpg", ".jpeg", ".png"].includes(path.extname(file).toLowerCase())
     );
 
     const encodedImages = [];
@@ -39,11 +37,16 @@ const encodeImagesToBase64 = (inputPath) => {
         }
 
         const base64Image = data.toString("base64");
-        encodedImages.push({ fileName: file, base64: base64Image });
+        encodedImages.push({
+          fileName: file,
+          base64: base64Image,
+          description: "",
+        });
 
         if (encodedImages.length === imageFiles.length) {
-          const encodedImage = encodedImages[0];
-          sendImagesToModel(encodedImage.base64);
+          encodedImages.forEach((encodedImage) => {
+            sendImagesToModel(encodedImage.base64, encodedImage.fileName);
+          });
         }
       });
     });
@@ -51,7 +54,7 @@ const encodeImagesToBase64 = (inputPath) => {
 };
 
 //SEND IMAGES TO VISION MODEL IN BASE64 FORMAT
-async function sendImagesToModel(base64Image) {
+async function sendImagesToModel(base64Image, filePath) {
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
@@ -72,6 +75,12 @@ async function sendImagesToModel(base64Image) {
       },
     ],
   });
-  console.log(response.choices[0]);
+  createHTMLElement(response.choices[0].message.content, filePath);
+  //SEND OUTPUT TO FUNCTION WHICH CREATES HTML ELEMENTS
 }
+
+const createHTMLElement = (description, filePath) => {
+  console.log(`<img src='${inputPath}/${filePath}' alt='${description}'>`);
+};
+
 encodeImagesToBase64(inputPath);
