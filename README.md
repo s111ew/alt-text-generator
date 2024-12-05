@@ -32,8 +32,11 @@ generateAltText(inputPath, outputPath)
 ## Features
 
 • Supports `.jpg`, `.jpeg`, and `.png` image formats.
+
 • Automatically generates ALT text for each image using AI.
+
 • Outputs HTML `<img>` tags to a specified Markdown file.
+
 • Easy to configure and use.
 
 </br>
@@ -65,8 +68,9 @@ Replace `<your-openai-api-key-here>` with your actual OpenAI API key.
 
 ## Usage
 
-1. Import the Module
-   You can import the generateAltText function using ES modules or CommonJS:
+### 1. Import the Module</br>
+
+You can import the generateAltText function using ES modules or CommonJS:
 
 ES Modules:
 
@@ -80,8 +84,9 @@ CommonJS:
 const { generateAltText } = require("alt-text-generator");
 ```
 
-2. Call the Function
-   The generateAltText function takes two arguments:
+### 2. Call the Function</br>
+
+The `generateAltText` function takes two arguments:
 
 • Path to the folder containing the target image files.
 • Path to the output Markdown file where the generated HTML tags will be written.
@@ -109,11 +114,11 @@ The output file will contain HTML `<img>` tags like this:
 
 ## Configuration
 
-Input Folder:
+### Input Folder:
 
 The input folder should contain the image files (.jpg, .jpeg, .png) for which you want ALT text generated.
 
-Output File:
+### Output File:
 
 Specify the file path where the HTML tags should be written. If the file does not exist, it will be created.
 
@@ -121,7 +126,9 @@ Specify the file path where the HTML tags should be written. If the file does no
 
 ## API Reference
 
-generateAltText(inputPath: string, outputPath: string): Promise<void>
+```
+generateAltText(inputPath: string, outputPath: string): Promise
+```
 
 | Parameter | Type   | Description                                                    |
 | --------- | ------ | -------------------------------------------------------------- |

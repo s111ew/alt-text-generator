@@ -1,6 +1,6 @@
 {
   "name": "alt-text-generator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Automatically generate HTML tags for image elements that include descriptive ALT text",
   "main": "lib/alt-text-generator.js",
   "scripts": {
