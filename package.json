@@ -1,8 +1,8 @@
 {
   "name": "alt-text-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automatically generate HTML tags for image elements that include descriptive ALT text",
-  "main": "lib/index.js",
+  "main": "lib/alt-text-generator.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
