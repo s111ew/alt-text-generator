@@ -1,166 +1,151 @@
-# alt-text-generator
+# Alt-Text Generator
 
-</br>
+_Batch convert image files to html tags with src and alt attributes included._
 
-## About
+## Overview
 
-Alt Text Generator is an npm package that automatically generates concise and descriptive ALT text for images in a given folder, leveraging OpenAI's API. The generated ALT text is written to a Markdown file in the form of HTML `<img>` tags.
+Alt-Text Generator is an npm package designed to automatically generate concise and descriptive ALT text for images in a specified folder, leveraging OpenAI's API. The generated ALT text is integrated into HTML `<img>` tags and saved in a Markdown file for easy usage.
 
-### Basic Overview:
+---
 
-1. Install the package:
+## Key Features
 
-```
-npm i alt-text-generator
-```
+- **Format Support**: Compatible with `.jpg`, `.jpeg`, and `.png` image formats.
+- **AI-Powered ALT Text**: Automatically generates accurate and descriptive ALT text for each image.
+- **HTML Output**: Outputs HTML `<img>` tags with the generated ALT text included.
+- **User-Friendly**: Simple setup and configuration.
 
-2. Call the function:
-
-```
-generateAltText(inputPath, outputPath)
-```
-
-3. Use the generated HTML tags with generated ALT Text automatically included:
-
-```
-<img src="./images/image1.jpg" alt="A red apple on a white table.">
-<img src="./images/image2.png" alt="A black cat sitting on a windowsill.">
-```
-
-</br>
-
-## Features
-
-• Supports `.jpg`, `.jpeg`, and `.png` image formats.
-
-• Automatically generates ALT text for each image using AI.
-
-• Outputs HTML `<img>` tags to a specified Markdown file.
-
-• Easy to configure and use.
-
-</br>
+---
 
 ## Installation
 
 Install the package via npm:
 
-```
-npm i alt-text-generator
+```bash
+npm install alt-text-generator
 ```
 
-</br>
+---
 
 ## Setup
 
-1. Create a `.env` File
-   The `.env` file is used to securely store your OpenAI API key. If the `.env` file doesn't exist, create one in the root directory of your project and make sure to add it to your `.gitignore` file if applicable.
+### Step 1: Create a `.env` File
 
-2. Add your OpenAI API key to the `.env` file as follows:
+The `.env` file is used to securely store your OpenAI API key. If it does not exist, create it in the root directory of your project and ensure it is listed in your `.gitignore` file to avoid exposing sensitive information.
 
+Add the following line to the `.env` file:
+
+```env
+OPENAI_API_KEY=<your-openai-api-key>
 ```
-OPENAI_API_KEY=<your-openai-api-key-here>
-```
 
-Replace `<your-openai-api-key-here>` with your actual OpenAI API key.
+Replace `<your-openai-api-key>` with your actual OpenAI API key.
 
-</br>
+---
 
 ## Usage
 
-### 1. Import the Module</br>
+### Importing the Module
 
-You can import the generateAltText function using ES modules or CommonJS:
+#### ES Modules
 
-ES Modules:
-
-```
+```javascript
 import { generateAltText } from "alt-text-generator";
 ```
 
-CommonJS:
+#### CommonJS
 
-```
+```javascript
 const { generateAltText } = require("alt-text-generator");
 ```
 
-### 2. Call the Function</br>
+### Calling the Function
 
-The `generateAltText` function takes two arguments:
+The `generateAltText` function requires two arguments:
 
-• Path to the folder containing the target image files.
-• Path to the output Markdown file where the generated HTML tags will be written.
+- **inputPath**: Path to the folder containing the target image files.
+- **outputPath**: Path to the Markdown file where the generated HTML tags will be written.
 
-Example:
+#### Example:
 
-```
+```javascript
 import { generateAltText } from "alt-text-generator";
 
 const inputPath = "./images"; // Path to the folder with image files
-const outputPath = "./output.html"; // Path to the output file (created if it doesn't exist)
+const outputPath = "./output.html"; // Path to the output file
 
 generateAltText(inputPath, outputPath)
+  .then(() => console.log("ALT text generation completed."))
+  .catch((err) => console.error("Error generating ALT text:", err));
 ```
 
-Expected Output:
-The output file will contain HTML `<img>` tags like this:
+#### Expected Output
 
+The `outputPath` file will contain HTML `<img>` tags with generated ALT text, such as:
+
+```html
+<img src="./images/image1.jpg" alt="A red apple on a white table." />
+<img src="./images/image2.png" alt="A black cat sitting on a windowsill." />
 ```
-<img src="./images/image1.jpg" alt="A red apple on a white table.">
-<img src="./images/image2.png" alt="A black cat sitting on a windowsill.">
-```
 
-</br>
+---
 
-## Configuration
+## Configuration Details
 
-### Input Folder:
+### Input Folder
 
-The input folder should contain the image files (.jpg, .jpeg, .png) for which you want ALT text generated.
+The `inputPath` should point to a folder containing `.jpg`, `.jpeg`, or `.png` images for ALT text generation.
 
-### Output File:
+### Output File
 
-Specify the file path where the HTML tags should be written. If the file does not exist, it will be created.
+Specify the file path (`outputPath`) where the HTML tags should be written. If the file does not exist, it will be created automatically.
 
-</br>
+---
 
 ## API Reference
 
-```
-generateAltText(inputPath: string, outputPath: string): Promise
-```
+### `generateAltText(inputPath: string, outputPath: string): Promise`
 
-| Parameter | Type   | Description                                                    |
-| --------- | ------ | -------------------------------------------------------------- |
-| inputPath | string | Path to the folder containing the images.                      |
-| git diff  | string | Path to the Markdown file where the HTML tags will be written. |
+| Parameter  | Type   | Description                                                            |
+| ---------- | ------ | ---------------------------------------------------------------------- |
+| inputPath  | string | Path to the folder containing the images.                              |
+| outputPath | string | Path to the Markdown file where the generated HTML tags will be saved. |
 
-This function scans the input folder for valid images, generates ALT text using OpenAI's API, and writes HTML tags to the output file.
+This function scans the `inputPath` for supported image files, generates ALT text using OpenAI’s API, and writes the resulting HTML `<img>` tags to the `outputPath`.
 
-</br>
+---
 
-## Requirements
+## System Requirements
 
-• Node.js: v14 or higher
+- **Node.js**: Version 14 or higher.
+- **npm**: Version 6 or higher.
+- **OpenAI API Key**: A valid API key from OpenAI.
 
-• npm: v6 or higher
+---
 
-• OpenAI API Key
-
-</br>
-
-## Example File Structure
-
-</br>
+## Example Project Structure
 
 ```
 project-root/
 │
-├── .env # Contains your OpenAI API key
-├── images/ # Folder containing image files
-│ ├── image1.jpg
-│ ├── image2.png
+├── .env              # Contains your OpenAI API key
+├── images/           # Folder containing image files
+│   ├── image1.jpg
+│   ├── image2.png
 │
-├── output.html # (Optional) Output file for generated HTML tags
-└── index.js # Script importing and using the package
+├── output.html       # Output file for generated HTML tags (optional)
+└── index.js          # Script importing and using the package
 ```
+
+---
+
+## Additional Notes
+
+- Ensure the `.env` file is included in your `.gitignore` to keep your API key secure.
+- For large image folders, the generation process might take time depending on the API response speed and the number of images.
+
+---
+
+## License
+
+Alt-Text Generator is licensed under the [MIT License](https://opensource.org/licenses/MIT).
