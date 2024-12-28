@@ -29,7 +29,7 @@ npm install alt-text-generator
 
 ## Setup
 
-### Step 1: Create a `.env` File
+### Create a `.env` File
 
 The `.env` file is used to securely store your OpenAI API key. If it does not exist, create it in the root directory of your project and ensure it is listed in your `.gitignore` file to avoid exposing sensitive information.
 
