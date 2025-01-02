@@ -2,7 +2,7 @@
 
 _Batch convert image files to html tags with src and alt attributes included._
 
-Visit the [Live Site](https://s111ew.github.io/atg-landing-page/)
+## 👉 Visit the [Live Site](https://s111ew.github.io/atg-landing-page/) 👈
 
 ## Overview
 
