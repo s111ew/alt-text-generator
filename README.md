@@ -2,6 +2,8 @@
 
 _Batch convert image files to html tags with src and alt attributes included._
 
+Visit the [Live Site](https://s111ew.github.io/atg-landing-page/)
+
 ## Overview
 
 Alt-Text Generator is an npm package designed to automatically generate concise and descriptive ALT text for images in a specified folder, leveraging OpenAI's API. The generated ALT text is integrated into HTML `<img>` tags and saved in a Markdown file for easy usage.
